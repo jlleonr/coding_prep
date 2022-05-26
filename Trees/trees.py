@@ -83,6 +83,43 @@ def preOrderTreeTraversalIterative(root: TreeNode) -> List[str]:
 
     return tree
 
+'''
+Check if a tree includes a given value
+Using BFT
+'''
+def treeIncludesBFT(root: TreeNode, target: int) -> bool:
+
+    if root == None:
+        return False
+
+    queue: deque = deque()
+    queue.append(root)
+
+    while len(queue) > 0:
+        currentNode: TreeNode = queue.popleft()
+
+        if currentNode.key == target:
+            return True
+
+        if currentNode.left is not None:
+            queue.append(currentNode.left)
+        if currentNode.right is not None:
+            queue.append(currentNode.right)
+
+    return False
+
+'''
+Check if a tree includes a value using recursion
+'''
+def treeIncludesRecursive(root: TreeNode, target: int) -> bool:
+    if root is None:
+        return False
+
+    if root.key == target:
+        return True
+
+    return treeIncludesRecursive(root.left, target) or treeIncludesRecursive(root.right, target)
+
 keys: List[int] = [5, 2, 7, 1, 3, 6, 8]
 
 a:TreeNode = None
@@ -113,6 +150,11 @@ print()
 printTreePostOrder(a)
 print()
 print(f"InOrder Tree = ", generateInOrderTree(a))
+
+val: int = 6
+print(f"Does {val} exists in Tree? : ", treeIncludesBFT(root=a, target=val))
+
+print(f"Does {val} exists in Tree? : ", treeIncludesRecursive(root=a, target=val))
 
 
 '''
