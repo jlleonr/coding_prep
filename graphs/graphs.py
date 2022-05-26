@@ -1,5 +1,11 @@
 from typing import List
 from collections import deque
+import sys
+
+sys.path.append("../coding_prep/")
+
+import variables as vars
+
 
 graph1 = {
     "a": ["b", "c"],
@@ -25,6 +31,45 @@ graph2 = {
     "z":["y", "v"],
     "v":["w", "z"]
 }
+
+'''
+A Graph class that takes a list of tuples
+and converts the tuples to the appropriate
+nodes and edges
+'''
+class Graph:
+
+    def __init__(self, edges: tuple):
+        self.graph = edges
+
+    @property
+    def graph(self):
+        return self._graph
+
+    @graph.setter
+    def graph(self, edges):
+        self._graph = {}
+
+        for start, end in edges:
+            # if start in self._graph:
+            #     self._graph[start].append(end)
+            # else:
+            #     if end == "":
+            #         self._graph[start] = []
+            #     else:
+            #         self._graph[start] = [end]
+            if start not in self._graph and start != "":
+                self._graph[start] = []
+            if end not in self._graph and end != "":
+                self._graph[end] = []
+            if start != "":
+                self._graph[start].append(end)
+            if end != "":
+                self._graph[end].append(start)
+
+
+routes_graph = Graph(vars.flights)
+print(routes_graph.graph)
 
 '''
 DFT isPathDFTRecursive approach
@@ -123,7 +168,25 @@ def shortestPathBFT(graph: dict, src: str, dst: str, path: List[str] = [], visit
         for neighbor in graph[currentNode]:
             if neighbor not in visited:
                 queue.appendleft(neighbor)
-        
+
+    return False
+
+
+'''
+hastPath function using BFT
+'''
+def hasPathBFT(graph: dict, src: str, dest: str) -> bool:
+    queue: List[str] = [src]
+
+    while(len(queue) > 0):
+        current: str = queue.pop(0)
+
+        if current == dest:
+            return True
+
+        for neighbor in graph[current]:
+            queue.append(neighbor)
+
     return False
 
 # dft2 = depthFirstTraversalIterative(graph1, "a")
