@@ -1,5 +1,11 @@
-from typing import List
+from typing import List, Tuple
 from collections import deque
+import sys
+
+sys.path.append("../coding_prep/")
+
+import variables as vars
+
 
 graph1 = {
     "a": ["b", "c"],
@@ -25,6 +31,45 @@ graph2 = {
     "z":["y", "v"],
     "v":["w", "z"]
 }
+
+'''
+A Graph class that takes a list of tuples
+and converts the tuples to the appropriate
+nodes and edges
+'''
+class Graph:
+
+    def __init__(self, edges: tuple):
+        self.graph = edges
+
+    @property
+    def graph(self):
+        return self._graph
+
+    @graph.setter
+    def graph(self, edges):
+        self._graph = {}
+
+        for start, end in edges:
+            # if start in self._graph:
+            #     self._graph[start].append(end)
+            # else:
+            #     if end == "":
+            #         self._graph[start] = []
+            #     else:
+            #         self._graph[start] = [end]
+            if start not in self._graph and start != "":
+                self._graph[start] = []
+            if end not in self._graph and end != "":
+                self._graph[end] = []
+            if start != "":
+                self._graph[start].append(end)
+            if end != "":
+                self._graph[end].append(start)
+
+
+routes_graph = Graph(vars.flights)
+print(routes_graph.graph)
 
 '''
 DFT isPathDFTRecursive approach
@@ -123,8 +168,100 @@ def shortestPathBFT(graph: dict, src: str, dst: str, path: List[str] = [], visit
         for neighbor in graph[currentNode]:
             if neighbor not in visited:
                 queue.appendleft(neighbor)
-        
+
     return False
+
+
+'''
+hastPath function using BFT
+'''
+def hasPathBFT(graph: dict, src: str, dest: str) -> bool:
+    queue: List[str] = [src]
+
+    while(len(queue) > 0):
+        current: str = queue.pop(0)
+
+        if current == dest:
+            return True
+
+        for neighbor in graph[current]:
+            queue.append(neighbor)
+
+    return False
+
+
+def shortestPath(graph: dict, src: str, dst: str) -> int:
+
+    print(graph)
+
+    queue: deque = deque()
+    queue.append((src, 0))
+    node: str
+    distance: int
+    visited: set = set()
+
+    #implement BFT algorithm
+    while len(queue) > 0:
+
+        #get a node, distance from the queue
+        (node, distance) = queue.popleft()
+
+        #if the node from the queue == dst
+        #return the distance
+        if node == dst:
+            return distance
+
+        #Find the distance for every neighbor of the source
+        for neighbor in graph[node]:
+            #If neighbor hasn't been visited
+            #add it to the set
+            if neighbor not in visited:
+                visited.add(neighbor)
+                #add visited neighbor to the queue and increase the distance
+                queue.append((neighbor, distance + 1))
+
+    return -1
+
+# *** Keep working to fix it
+def shortestPath2(graph: dict, src: str, dst: str) -> Tuple[int, List[str]]:
+
+    print(graph)
+
+    path: List[str] = []
+    current_path: List[str] = [src]
+    queue: deque = deque()
+    visited: set = set()
+    node: str
+    distance: int
+
+    queue.append((src, 0, path))
+
+    #implement BFT algorithm
+    while len(queue) > 0:
+
+        #get a node, distance from the queue
+        (node, distance, current_path) = queue.popleft()
+
+        #if the node from the queue == dst
+        #return the distance
+        if node == dst:
+            return (distance, current_path)
+
+        #Find the distance for every neighbor of the source
+        for neighbor in graph[node]:
+
+            current_path = list(path)
+            current_path.append(neighbor)
+            #queue.append(current_path)
+
+            #If neighbor hasn't been visited
+            #add it to the set
+            if neighbor not in visited:
+                visited.add(neighbor)
+                #add visited neighbor to the queue and increase the distance
+                queue.append((neighbor, distance + 1, current_path))
+
+    return (-1, [])
 
 # dft2 = depthFirstTraversalIterative(graph1, "a")
 # print(dft2)
@@ -143,3 +280,9 @@ src = "f"
 dst = "d"
 sp = shortestPathBFT(graph=graph1, src=src, dst=dst, path=path)
 print(f"What is the shortest path from {src} to {dst}?: -> {path}")
+
+src = "Mumbai"
+dst = "New York"
+
+sp2 = shortestPath2(graph=vars.flights_graph, src=src, dst=dst)
+print(f"The shortest path from {src} to {dst} = ", sp2)
