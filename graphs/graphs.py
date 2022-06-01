@@ -51,13 +51,6 @@ class Graph:
         self._graph = {}
 
         for start, end in edges:
-            # if start in self._graph:
-            #     self._graph[start].append(end)
-            # else:
-            #     if end == "":
-            #         self._graph[start] = []
-            #     else:
-            #         self._graph[start] = [end]
             if start not in self._graph and start != "":
                 self._graph[start] = []
             if end not in self._graph and end != "":
@@ -124,6 +117,27 @@ def depthFirstTraversalIterative(graph: dict, source: str, path: List[str] = Non
 
     return path
 
+
+'''
+Breadth First Traversal implemented with a Queue,
+Queue has T(n) = O(1)
+'''
+def breadthFirstTraversalQ(graph: dict, source: str) -> List[str]:
+   queue: deque = deque()
+   queue.append(source)
+
+   path: List[str] = []
+
+   while(len(queue) > 0):
+      current = queue.popleft()
+      path.append(current)
+
+      for neighbor in graph[current]:
+         queue.append(neighbor)
+
+   return path
+
+
 '''
 Find if there is a path in an undirected non-cyclic graph
 from source node to destination node
@@ -188,6 +202,78 @@ def hasPathBFT(graph: dict, src: str, dest: str) -> bool:
             queue.append(neighbor)
 
     return False
+
+
+'''
+Helper function to build a graph from a given list
+of edges
+'''
+def buildGraph(edges: List[List[str]]) -> dict:
+    graph: dict = {}
+
+    for a, b in edges:
+
+        if a not in graph:
+            graph[a] = []
+        if b not in graph:
+            graph[b] = []
+
+        graph[a].append(b)
+        graph[b].append(a)
+
+    return graph
+
+
+'''
+For a given graph, count the number of connected components
+'''
+class ConnectedComponents:
+    #Set the input graph value to the graph property
+    def __init__(self, graph: dict) -> None:
+        self.graph = graph
+
+    #Property to read the graph variable as a property
+    @property
+    def graph(self) -> dict:
+        return self.__graph
+
+    #Setter for the graph property
+    @graph.setter
+    def graph(self, graph: dict) -> None:
+        self.__graph = graph
+
+    '''
+    Count how many connected groups are present in the
+    input graph
+    '''
+    def count(self) -> int:
+        visited: set = set()
+        count: int = 0
+
+        #Do a Depth First Search for every node in the graph
+        #After exploring all neighbors, increase counter for
+        for node in self.graph:
+            if self.__exploredAllNeighbors(node, visited):
+                count += 1
+
+        return count
+
+    def __exploredAllNeighbors(self, current: str, visited: set) -> bool:
+        if current in visited:
+            return False
+
+        visited.add(current)
+
+        for neighbor in self.graph[current]:
+            self.__exploredAllNeighbors(neighbor, visited)
+
+        return True
+
+
+cc = ConnectedComponents(vars.graph2)
+num_of_cc = cc.count()
+
+print(f"The number of connected components = ", num_of_cc)
 
 
 def shortestPath(graph: dict, src: str, dst: str) -> int:
@@ -286,3 +372,170 @@ dst = "New York"
 
 sp2 = shortestPath2(graph=vars.flights_graph, src=src, dst=dst)
 print(f"The shortest path from {src} to {dst} = ", sp2)
+
+
+def countIslands(graph: dict) -> int:
+
+    #explore all neighbors of a node
+    #after all neighbors are visited, increase counter
+    counter: int = 0
+    visited: set = set()
+
+    #For very node in the graph, explore all edges
+    for node in graph:
+        if exploredAllEdges(graph, node, visited):
+            counter += 1
+
+    return counter
+
+
+def exploredAllEdges(graph: dict, node: str, visited: set) -> bool:
+
+    #If a node has been visited, return false
+    if node in visited:
+        return False
+
+    #Add visited node to the set
+    visited.add(node)
+
+    #explore all neighbors of the current node
+    for neighbor in graph[node]:
+        exploredAllEdges(graph, neighbor, visited)
+
+    return True
+
+
+num_of_islands = countIslands(vars.graph2)
+print(f"Number of islands = ", num_of_islands)
+
+
+def findLargestIsland(graph: dict) -> int:
+
+    visited: set = set()
+    biggest: int = 0
+
+    #For every node in the graph, explore all edges
+    for node in graph:
+        size = exploreIslandSize(graph, node, visited)
+        biggest = max(biggest, size)
+
+    return biggest
+
+
+def exploreIslandSize(graph: dict, node: str, visited: set) -> int:
+
+    #If a node has been visited, return false
+    if node in visited:
+        return 0
+
+    visited.add(node)
+
+    #Initial island size
+    size: int = 1
+
+    #explore all nodes of the current island
+    for neighbor in graph[node]:
+        size += exploreIslandSize(graph, neighbor, visited)
+
+    return size
+
+
+biggestIslandSize: int = findLargestIsland(vars.graph2)
+print(f"The size of the biggest Island in the graph = ", biggestIslandSize)
+
+
+'''
+Count the number of islands on a grid
+'''
+def islandCount(grid: List[List[str]]) -> int:
+    visited: set = set()
+    count: int = 0
+
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if exploreDFT(grid, row, col, visited) == True:
+                count += 1
+
+    return count
+
+
+'''
+Explore connected islands on a grid using DFT
+'''
+def exploreDFT(grid: List[List[str]], row: int, col: int, visited: set) -> bool:
+
+    rowInbound: bool = (0 <= row) and (row < len(grid))
+    colInbound: bool = (0 <= col) and (col < len(grid[0]))
+
+    if (rowInbound != True) or (colInbound != True):
+        return False
+
+    # Check curremt coordinate is not Water
+    if grid[row][col] == "W":
+        return False
+
+    # Store current position in the grid
+    position: tuple = (row, col)
+
+    # Check that position has not been visited
+    if position in visited:
+        return False
+
+    visited.add(position)
+
+    # Explore neighbors of current position in all cardinal points
+    exploreDFT(grid, row - 1, col, visited)  # Explore up
+    exploreDFT(grid, row + 1, col, visited)  # Explore down
+    exploreDFT(grid, row, col - 1, visited)  # Explore left
+    exploreDFT(grid, row, col + 1, visited)  # Explore right
+
+    # If all non water neighbors have been explored and
+    # coordinate is not Water, then we found an island
+    return True
+
+
+def minimumIsland(grid: List[List[str]]) -> int:
+    visited: set = set()
+    minSize: int = len(grid) * len(grid[0])
+
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            size = exploreMinimumDFT(grid, row, col, visited)
+            if size > 0:
+                minSize = min(size, minSize)
+
+    return minSize
+
+
+def exploreMinimumDFT(grid: List[List[str]], row: int, col: int, visited: set) -> int:
+
+    rowInbound: bool = (0 <= row) and (row < len(grid))
+    colInbound: bool = (0 <= col) and (col < len(grid[0]))
+
+    if (rowInbound != True) or (colInbound != True):
+        return 0
+
+    # Check current coordinate is not Water
+    if grid[row][col] == "W":
+        return 0
+
+    # Store current position in the grid
+    position: tuple = (row, col)
+
+    # Check that position has not been visited
+    if position in visited:
+        return 0
+
+    visited.add(position)
+
+    size = 1
+
+    # Explore neighbors of current position in all cardinal points
+    size += exploreMinimumDFT(grid, row - 1, col, visited)  # Explore up
+    size += exploreMinimumDFT(grid, row + 1, col, visited)  # Explore down
+    size += exploreMinimumDFT(grid, row, col - 1, visited)  # Explore left
+    size += exploreMinimumDFT(grid, row, col + 1, visited)  # Explore right
+
+    # If all non water neighbors have been explored and
+    # coordinate is not Water, then we found an island
+    return size

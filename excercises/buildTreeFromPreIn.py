@@ -20,10 +20,27 @@ def buildTree(preorder: List[int], inorder: List[int]) -> TreeNode:
     if not preorder or not inorder:
         return None
 
+    inorderDict: dict = dict()
+    root: TreeNode
+
+    # Convert lists to map
+    for index, value in enumerate(inorder):
+        inorderDict[value] = index
+
+    root = searchTree(preorder, inorder, inorderDict)
+
+    return root
+
+
+def searchTree(preorder: List[int], inorder: List[int], inorderDict: dict) -> TreeNode:
+
+    if not preorder or not inorder:
+        return None
+
     root: TreeNode = TreeNode(preorder[0])
-    mid = inorder.index(root.data)
-    root.left = buildTree(preorder[1:mid+1], inorder[:mid])
-    root.right = buildTree(preorder[mid+1:], inorder[mid+1:])
+    mid = inorderDict[root.data]
+    root.left = searchTree(preorder[1:mid+1], inorder[:mid], inorderDict)
+    root.right = searchTree(preorder[mid+1:], inorder[mid+1:], inorderDict)
 
     return root
 
