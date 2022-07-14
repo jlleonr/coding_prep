@@ -44,7 +44,7 @@ graph2 = {
     "4": ["3", "2"]
 }
 
-edges2:List[List[str]] = [
+edges2: List[List[str]] = [
     ["w", "x"],
     ["x", "y"],
     ["z", "y"],
