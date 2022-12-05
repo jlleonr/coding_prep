@@ -40,18 +40,18 @@ def solution(input: List[int]) -> int:
 
     left: int = prices[0]
     right: int = 1
-    maxProfit: int = 0
+    max_profit: int = 0
 
     while right < len(prices):
 
         if prices[right] < left:
             left = prices[right]
         else:
-            maxProfit = max(maxProfit, prices[right] - left)
+            max_profit = max(max_profit, prices[right] - left)
 
         right += 1
 
-    return maxProfit
+    return max_profit
 
 # Test cases:
 # prices = [7, 1, 5, 3, 6, 4]

@@ -34,33 +34,26 @@ Logic:
                     count += 1
                 return count
 '''
-def movesNeeded(list: List[int]) -> int:
+
+
+def moves_needed(list: List[int]) -> int:
     # Get the length of the array
     n: int = len(list)
 
     # Check if elements are in increasing order
     if (list[0] <= list[1]) and (list[n - 2] <= list[n - 1]):
-        makeIncreasing(list)
+        make_increasing(list)
     # Check if elements are in decreasing order
     elif (list[0] >= list[1]) and (list[n - 2] >= list[n - 1]):
-        pass  #decreasing TODO
+        pass  # decreasing TODO
     # Check if increasing and then decreasing
     elif (list[0] <= list[1]) and (list[n - 2] >= list[n - 1]):
-        pass # increasing then decreasing
+        pass  # increasing then decreasing
     else:
         pass  # decreasing then increasing TODO
 
 
-
-    # For every element
-      # Check that n: n < n + 1 = True
-          # If not:
-          #      While n > n + 1
-          #        do n -= 1
-          #         count += 1
-        #     return count
-
-def makeDecreasing(list: List[int]) -> int:
+def make_decreasing(list: List[int]) -> int:
     count: int = 0
     for i in range(len(list) - 1):
 
@@ -71,7 +64,7 @@ def makeDecreasing(list: List[int]) -> int:
     return count
 
 
-def makeIncreasing(list: List[int]) -> int:
+def make_increasing(list: List[int]) -> int:
     count: int = 0
     for i in range(len(list) - 1):
 
@@ -81,8 +74,9 @@ def makeIncreasing(list: List[int]) -> int:
 
     return count
 
+
 lst = [1, 4, 2, 2]
-print(makeDecreasing(lst))
+print(make_decreasing(lst))
 
 lst = [2, 3, 4, 1]
-print(makeIncreasing(lst))
+print(make_increasing(lst))

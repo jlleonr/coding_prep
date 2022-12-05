@@ -24,7 +24,7 @@ def solution(prices: List[int]) -> int:
 
     left: int = 0
     right: int = 1
-    maxProfit: int = 0
+    max_profit: int = 0
 
     while right < length:
 
@@ -36,13 +36,13 @@ def solution(prices: List[int]) -> int:
             if prices[right + 1] > prices[right]:
                 right += 1
             else:
-                maxProfit += prices[left] - prices[right]
+                max_profit += prices[left] - prices[right]
                 left = right + 1
                 right = left + 1
         elif prices[length - 1] > prices[left]:
-            maxProfit += prices[length - 1] - prices[left]
+            max_profit += prices[length - 1] - prices[left]
 
-    return maxProfit
+    return max_profit
 
 
 # prices = [7, 1, 5, 3, 6, 4]
